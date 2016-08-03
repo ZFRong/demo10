@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="format-detection" content="telephone=no, email=no" />
+		<title>图片上传裁剪</title>
+		<!--<link rel="stylesheet" type="text/css" href="css/normalize.css" />-->
+		<!--<link rel="stylesheet" type="text/css" href="css/default.css">-->
+		<!--<link rel="stylesheet" type="text/css" href="css/demo.css" />-->
+		<link rel="stylesheet" type="text/css" href="css/style5.css" />
+		<script src="js/modernizr.custom.js"></script>
+		<style>
+			body{
+				text-align: center;
+			}
+			#clipArea {
+				margin-top: 100px;
+			}
+			
+			#file,
+			#clipBtn {
+				margin: 20px;
+			}
+			
+			#view1 {
+                 	width: 300px !important;
+				height: 300px !important;  
+			}
+			.view {
+				margin:30px auto;
+				width: 200px;
+				height: 200px;
+				background-color:#424141
+			}
+			
+			.img-file {
+				display: none;
+			}
+		</style>
+		<!--[if IE]>
+		<script src="http://libs.useso.com/js/html5shiv/3.7/html5shiv.min.js"></script>
+	<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="htmleaf-container">
+			<input class="img-file" type="file" id="file">
+			<div class="view" id="view1" data-view-id="view1"></div>
+		</div>
+		<div class="overlay overlay-scale">
+			<div id="clipArea"></div>
+			<button id="clipBtn" type="button" class="overlay-close">裁剪</button>
+            <button id="" name="" class="qx_caijian_btn overlay-close">取消</button>
+		</div>
+        
+        
+		<script>
+			window.jQuery || document.write('<script src="js/jquery-2.1.1.min.js"><\/script>')
+		</script>
+		<script src="js/iscroll-zoom.js"></script>
+		<script src="js/hammer.js"></script>
+		<script src="js/jquery.photoClip.js"></script>
+		<script src="js/classie.js"></script>
+		<script src="js/zhezhao.js"></script>
+<script>
+	  var pmkuan = document.body.clientWidth,pmgao = document.body.clientHeight;
+	  $("#clipArea").css("with",pmkuan+"px");
+	  $("#clipArea").css("height",pmkuan+"px"); 
+
+</script>
+		<script>
+			//document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
+			function caijian(viewId){
+				viewId = "#"+viewId;
+				console.info(viewId)
+				$("#clipArea").photoClip({
+				width: pmkuan-60,
+				height: pmkuan-60,
+				file: "#file",
+				view: viewId,
+				ok: "#clipBtn",
+				loadStart: function() {
+					console.log("照片读取中");
+				},
+				loadComplete: function() {
+					toggleOverlay();
+					console.log("照片读取完成");
+				},
+				clipFinish: function(dataURL) {
+					//console.log(dataURL);
+					//toggleOverlay();
+					$("#file").remove();
+					$(".photo-clip-view").remove();
+				}
+			 });
+			}
+			$(".view").click(function() {
+				var tem = '<input class="img-file" type="file" id="file">';
+				$(".htmleaf-container").append(tem);
+				caijian($(this).data('viewId'))
+				$('#file').click();
+			});
+			$(".qx_caijian_btn").click(function(){toggleOverlay();})
+			var triggerBttn = document.getElementById('clipBtn22'),
+				overlay = document.querySelector('div.overlay'),
+				closeBttn = overlay.querySelector('button.overlay-close');
+			transEndEventNames = {
+					'WebkitTransition': 'webkitTransitionEnd',
+					'MozTransition': 'transitionend',
+					'OTransition': 'oTransitionEnd',
+					'msTransition': 'MSTransitionEnd',
+					'transition': 'transitionend'
+				},
+				transEndEventName = transEndEventNames[Modernizr.prefixed('transition')],
+				support = {
+					transitions: Modernizr.csstransitions
+				};
+
+			function toggleOverlay() {
+				console.log("首页调用"+classie.has(overlay, 'open'))
+				if (classie.has(overlay, 'open')) {
+					classie.remove(overlay, 'open');
+					classie.add(overlay, 'close');
+					var onEndTransitionFn = function(ev) {
+						if (support.transitions) {
+							if (ev.propertyName !== 'visibility') return;
+							this.removeEventListener(transEndEventName, onEndTransitionFn);
+						}
+						classie.remove(overlay, 'close');
+					};
+					if (support.transitions) {
+						overlay.addEventListener(transEndEventName, onEndTransitionFn);
+					} else {
+						onEndTransitionFn();
+					}
+				} else if (!classie.has(overlay, 'close')) {
+					classie.add(overlay, 'open');
+				}
+			}
+		</script>
+	</body>
+
+</html>
